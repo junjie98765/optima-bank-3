@@ -1,0 +1,23 @@
+/* Specific styles for the rewards header */
+.rewards-header {
+    background-color: #4b0082;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .rewards-header h1,
+  .rewards-header p {
+    color: white !important;
+  }
+  
+  .rewards-header h1 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  
+  .rewards-header p {
+    font-size: 1.125rem;
+  }
+  
