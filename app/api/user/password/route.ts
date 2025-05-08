@@ -22,13 +22,14 @@ export async function POST(request: NextRequest) {
 
     await mongoose.connect(process.env.MONGODB_URI as string)
 
+    // Find user by ID
     const user = await User.findById(session.user.id)
 
     if (!user) {
       return NextResponse.json({ message: "User not found" }, { status: 404 })
     }
 
-    // Verify current password
+    // Verify current password using bcrypt directly
     const isPasswordValid = await bcrypt.compare(currentPassword, user.password)
 
     if (!isPasswordValid) {
@@ -39,9 +40,8 @@ export async function POST(request: NextRequest) {
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(newPassword, salt)
 
-    // Update password
-    user.password = hashedPassword
-    await user.save()
+    // Update password directly in the database to bypass any middleware issues
+    await User.updateOne({ _id: user._id }, { $set: { password: hashedPassword } })
 
     return NextResponse.json({ message: "Password updated successfully" })
   } catch (error) {

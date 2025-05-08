@@ -28,6 +28,16 @@ const UserSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  resetToken: {
+    type: String,
+  },
+  resetTokenExpiry: {
+    type: Number,
+  },
+  // Add a numeric token for more reliable reset
+  resetCode: {
+    type: String,
+  },
 })
 
 // Hash password before saving

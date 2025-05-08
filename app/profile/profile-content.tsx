@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Eye, EyeOff, AlertCircle } from "lucide-react"
 import { format } from "date-fns"
+import { signOut } from "next-auth/react"
 
 interface UserProfile {
   username: string
@@ -78,16 +79,34 @@ export default function ProfileContent({ userProfile }: ProfileContentProps) {
     setIsLoading(true)
 
     try {
-      // In a real application, this would call an API to change the password
-      // For now, we'll just simulate a successful password change
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const response = await fetch("/api/user/password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          currentPassword,
+          newPassword,
+        }),
+      })
 
-      setSuccess("Password changed successfully")
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to change password")
+      }
+
+      setSuccess("Password changed successfully. Please log in again with your new password.")
       setCurrentPassword("")
       setNewPassword("")
       setConfirmPassword("")
+
+      // Add a delay before signing out to allow the user to read the success message
+      setTimeout(() => {
+        signOut({ callbackUrl: "/login" })
+      }, 3000)
     } catch (error) {
-      setError("Failed to change password. Please try again.")
+      setError(error instanceof Error ? error.message : "Failed to change password. Please try again.")
     } finally {
       setIsLoading(false)
     }
@@ -180,13 +199,14 @@ export default function ProfileContent({ userProfile }: ProfileContentProps) {
                         type={showCurrentPassword ? "text" : "password"}
                         value={currentPassword}
                         onChange={(e) => setCurrentPassword(e.target.value)}
-                        disabled={isLoading}
+                        disabled={isLoading || !!success}
                         className="text-gray-900"
                       />
                       <button
                         type="button"
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
                         onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                        disabled={isLoading || !!success}
                       >
                         {showCurrentPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                       </button>
@@ -203,13 +223,14 @@ export default function ProfileContent({ userProfile }: ProfileContentProps) {
                         type={showNewPassword ? "text" : "password"}
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                        disabled={isLoading}
+                        disabled={isLoading || !!success}
                         className="text-gray-900"
                       />
                       <button
                         type="button"
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
                         onClick={() => setShowNewPassword(!showNewPassword)}
+                        disabled={isLoading || !!success}
                       >
                         {showNewPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                       </button>
@@ -226,13 +247,14 @@ export default function ProfileContent({ userProfile }: ProfileContentProps) {
                         type={showConfirmPassword ? "text" : "password"}
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        disabled={isLoading}
+                        disabled={isLoading || !!success}
                         className="text-gray-900"
                       />
                       <button
                         type="button"
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        disabled={isLoading || !!success}
                       >
                         {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                       </button>
@@ -251,10 +273,10 @@ export default function ProfileContent({ userProfile }: ProfileContentProps) {
                   </div>
 
                   <div className="flex justify-end space-x-4">
-                    <Button type="button" variant="outline" disabled={isLoading}>
+                    <Button type="button" variant="outline" disabled={isLoading || !!success}>
                       Cancel
                     </Button>
-                    <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={isLoading}>
+                    <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={isLoading || !!success}>
                       {isLoading ? "Changing Password..." : "Change Password"}
                     </Button>
                   </div>

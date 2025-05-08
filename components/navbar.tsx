@@ -64,7 +64,7 @@ export default function Navbar() {
           <Link href="/rewards" className="text-gray-800 hover:text-primary">
             Rewards
           </Link>
-          <Link href="/contact" className="text-gray-800 hover:text-primary">
+          <Link href="/contact-us" className="text-gray-800 hover:text-primary">
             Support
           </Link>
         </nav>

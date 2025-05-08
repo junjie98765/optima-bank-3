@@ -44,7 +44,7 @@ export default function ContactForm() {
     setIsLoading(true)
 
     try {
-      const response = await fetch("/api/send-contact", {
+      const response = await fetch("/api/send-message", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

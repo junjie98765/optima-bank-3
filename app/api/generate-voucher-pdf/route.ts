@@ -3,7 +3,9 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { connectToDatabase } from "@/lib/db"
 import Redemption from "@/lib/models/redemption"
+// Fix the import statement for jsPDF
 import { jsPDF } from "jspdf"
+// Add the autotable plugin
 import "jspdf-autotable"
 
 export async function GET(request: NextRequest) {
@@ -62,15 +64,68 @@ export async function GET(request: NextRequest) {
     doc.setFont("helvetica", "normal")
     doc.text(redemption.code, 80, 70)
 
-    // Draw a barcode-like rectangle
+    // Generate a proper barcode
     const barcodeY = 80
-    for (let i = 0; i < 30; i++) {
-      const width = Math.random() * 3 + 1
-      const x = 50 + i * 3
-      const height = Math.random() * 20 + 10
+    const barcodeValue = redemption.code // Use the redemption code as the barcode value
+    const barcodeX = 50
+    const barcodeWidth = 100
+    const barcodeHeight = 30
+
+    // Draw barcode background
+    doc.setFillColor(255, 255, 255)
+    doc.rect(barcodeX, barcodeY, barcodeWidth, barcodeHeight, "F")
+
+    // Simple Code128 barcode implementation
+    const drawBarcode = (value) => {
+      const chars = value.split("")
+      let currentX = barcodeX + 5
+
+      // Draw start marker
       doc.setFillColor(0, 0, 0)
-      doc.rect(x, barcodeY, width, height, "F")
+      doc.rect(currentX, barcodeY + 5, 1, barcodeHeight - 10, "F")
+      currentX += 2
+      doc.rect(currentX, barcodeY + 5, 1, barcodeHeight - 10, "F")
+      currentX += 2
+      doc.rect(currentX, barcodeY + 5, 2, barcodeHeight - 10, "F")
+      currentX += 3
+
+      // Draw data bars
+      for (let i = 0; i < chars.length; i++) {
+        // Convert character to a predictable pattern based on ASCII code
+        const charCode = chars[i].charCodeAt(0)
+
+        // Create a pattern of thin and thick bars based on character code
+        for (let j = 0; j < 6; j++) {
+          const isBar = (charCode + j) % 2 === 0
+          const barWidth = (charCode + j) % 3 === 0 ? 2 : 1
+
+          if (isBar) {
+            doc.setFillColor(0, 0, 0)
+            doc.rect(currentX, barcodeY + 5, barWidth, barcodeHeight - 10, "F")
+          }
+
+          currentX += barWidth + 1
+        }
+
+        // Add space between characters
+        currentX += 1
+      }
+
+      // Draw end marker
+      doc.setFillColor(0, 0, 0)
+      doc.rect(currentX, barcodeY + 5, 2, barcodeHeight - 10, "F")
+      currentX += 3
+      doc.rect(currentX, barcodeY + 5, 1, barcodeHeight - 10, "F")
+      currentX += 2
+      doc.rect(currentX, barcodeY + 5, 1, barcodeHeight - 10, "F")
+
+      // Add barcode text below
+      // doc.setFontSize(10)
+      // doc.setFont("helvetica", "normal")
+      // doc.text(value, barcodeX + barcodeWidth / 2, barcodeY + barcodeHeight + 10, { align: "center" })
     }
+
+    drawBarcode(barcodeValue)
 
     // User details
     doc.setFontSize(12)

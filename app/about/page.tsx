@@ -3,6 +3,7 @@ import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import Image from "next/image"
 
 export const metadata: Metadata = {
   title: "About Us - Optima Rewards",
@@ -10,6 +11,34 @@ export const metadata: Metadata = {
 }
 
 export default function AboutPage() {
+  // Team member data
+  const teamMembers = [
+    {
+      id: 1,
+      name: "Ong",
+      position: "Chief Executive Officer",
+      image: "/images/team/ong.jpg",
+    },
+    {
+      id: 2,
+      name: "Sakthy",
+      position: "Chief Financial Officer",
+      image: "/images/team/sakthy.jpg",
+    },
+    {
+      id: 3,
+      name: "Thushaanya",
+      position: "Chief Technology Officer",
+      image: "/images/team/thusha.jpg",
+    },
+    {
+      id: 4,
+      name: "Shazbilah",
+      position: "Chief Marketing Officer",
+      image: "/images/team/shaz.jpg",
+    },
+  ]
+
   return (
     <main className="min-h-screen flex flex-col">
       <Navbar />
@@ -36,7 +65,13 @@ export default function AboutPage() {
             </div>
 
             <div className="rounded-lg overflow-hidden shadow-lg">
-              <img src="/placeholder.svg?height=400&width=600" alt="About Optima Bank" className="w-full h-auto" />
+              <Image
+                src="/images/about/about-optima-bank.jpg"
+                alt="About Optima Bank"
+                width={600}
+                height={400}
+                className="w-full h-auto"
+              />
             </div>
           </div>
 
@@ -114,17 +149,19 @@ export default function AboutPage() {
             <h2 className="text-2xl font-bold mb-6 text-center">Our Team</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="text-center">
-                  <div className="w-32 h-32 bg-gray-200 rounded-full mx-auto mb-4 overflow-hidden">
-                    <img
-                      src={`/placeholder.svg?height=128&width=128&text=Team Member ${i}`}
-                      alt={`Team Member ${i}`}
+              {teamMembers.map((member) => (
+                <div key={member.id} className="text-center">
+                  <div className="w-32 h-32 mx-auto mb-4 overflow-hidden rounded-full">
+                    <Image
+                      src={member.image || "/placeholder.svg"}
+                      alt={member.name}
+                      width={128}
+                      height={128}
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <h3 className="text-lg font-semibold">John Doe</h3>
-                  <p className="text-gray-600 text-sm">Chief Executive Officer</p>
+                  <h3 className="text-lg font-semibold">{member.name}</h3>
+                  <p className="text-gray-600 text-sm">{member.position}</p>
                 </div>
               ))}
             </div>

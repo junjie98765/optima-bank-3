@@ -31,7 +31,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-600 hover:text-primary">
+                <Link href="/contact-us" className="text-gray-600 hover:text-primary">
                   Contact
                 </Link>
               </li>
@@ -42,10 +42,10 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
             <address className="not-italic text-gray-600">
               <p>Optima Bank</p>
-              <p>999 Jalan Batu</p>
-              <p>Kuala Lumpur Malaysia</p>
+              <p>Serkhet, NP12</p>
+              <p>Bøersdvanger 06</p>
               <p>Email: optimabank@gmail.com</p>
-              <p>Phone: +6099 9893 5647</p>
+              <p>Phone: +0099 9893 5647</p>
             </address>
           </div>
         </div>

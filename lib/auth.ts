@@ -1,6 +1,5 @@
 import type { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import GoogleProvider from "next-auth/providers/google"
 import mongoose from "mongoose"
 import User from "@/lib/models/user"
 import bcrypt from "bcryptjs"
@@ -28,7 +27,7 @@ export const authOptions: NextAuthOptions = {
             return null
           }
 
-          // Check password
+          // Check password using bcrypt directly
           const isPasswordValid = await bcrypt.compare(credentials.password, user.password)
 
           if (!isPasswordValid) {
@@ -47,10 +46,6 @@ export const authOptions: NextAuthOptions = {
         }
       },
     }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    }),
   ],
   session: {
     strategy: "jwt",
@@ -68,9 +63,6 @@ export const authOptions: NextAuthOptions = {
       if (trigger === "update" && session?.points) {
         token.points = session.points
       }
-
-      // Don't fetch from database on every token refresh
-      // Only fetch when explicitly requested via session update
 
       return token
     },
